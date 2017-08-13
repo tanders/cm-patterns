@@ -1,0 +1,201 @@
+* Common Music patterns (cm-patterns)
+
+This is Rick Taube's 'Pattern Streams' from Common Music v.2, but without the rest of Common Music. The code is based on the Patterns library by Anders Vinjar, who [[https://forge.ircam.fr/p/omlibraries/downloads/639/][ported the Common Music to OpenMusic]] (OM Patterns library version 0.98). 
+
+This code has been tested with Clozure CL ([[http://opusmodus.com/][in Opusmodus]]).
+
+
+** References 
+
+   Taube, H. (2004) /Notes from the Metalevel. London and New York/: Taylor & Francis.
+
+
+* Installation
+  
+  The instructions below use git for the installation. Even though it is a bit more involved at first, it allows for convenient updates later, and you can even contribute to the development. 
+
+  Install [[https://git-scm.com][git]] (if you have not done already). Also, you should register at [[https://github.com][GitHub]].
+    
+  Download the present software with git into a directory where [[https://common-lisp.net/project/asdf/][ASDF]] can find the software, e.g., [[https://common-lisp.net/project/asdf/asdf/Quick-start-summary.html#Quick-start-summary][~/common-lisp/]]. For example, on UNIX incl. OS X you can enter the following commands at the command line (after you created the directory =~/common-lisp/=). Note that =$= is the terminal prompt here, you do not need to enter that :)
+
+#+begin_src bash :tangle yes
+$ cd ~/common-lisp
+$ git clone https://github.com/tanders/cm-patterns.git
+#+end_src
+
+  You will be asked for your GitHub username and password.
+  
+
+** Updating your software
+
+   You can update your software later at the terminal in the following way.
+
+#+begin_src bash :tangle yes
+$ cd ~/common-lisp/cm-patterns
+$ git pull
+#+end_src
+
+
+* Usage Demonstrations
+
+  An introduction to algorithmic composition using patterns is chapter 20 in Rick's book (Taube, 2004). Patterns are used everywhere in the book; is a nice intro. The code of the book is [[http://www.moz.ac.at/sem/lehre/lib/cm/Notes%20from%20the%20Metalevel/00/contents.html][available online]]. See also the [[http://commonmusic.sourceforge.net/cm2/doc/dict/index.html][Common Music 2 reference documentation]], in particular the [[http://commonmusic.sourceforge.net/cm2/doc/dict/patterns-topic.html][section on patterns]].
+  
+  Some features of the original pattern streams are missing in the present port, in particular the data parsing features of the original versions with pattern keywords like 'keynum', 'transposer' etc. Also, Common Music features beyond the actual patterns are missing, e.g., there are no [[http://commonmusic.sourceforge.net/cm2/doc/dict/process-mac.html][CM processes]]. 
+
+  CM-patterns is an [[https://common-lisp.net/project/asdf/][ASDF]] system (ASDF is the de facto standard for building Common Lisp software), and you can load it into your Lisp compiler as follows.
+
+
+#+begin_src common-lisp :tangle yes
+(require :cm-patterns)
+#+end_src  
+
+To get started, here are a few examples. I am using CM-patterns from within another Lisp package (e.g., the Opusmodus package, =:om=), therefore I am adding the package prefix =cm:= before each CM-patterns symbol. 
+
+The [[http://commonmusic.sourceforge.net/cm2/doc/dict/cycle-cls.html][cycle pattern]] repeats its elements in a cyclic fashion. The macro [[http://commonmusic.sourceforge.net/cm2/doc/dict/new-mac.html][new]] initialises a pattern object, and the function [[http://commonmusic.sourceforge.net/cm2/doc/dict/next-fn.html][next]] returns one or more pattern elements.
+
+#+begin_src common-lisp :tangle yes
+; define the pattern
+(setf p (cm:new cm:cycle :of '(a b c)))
+
+; retrieve the first pattern value
+(cm:next p)
+; => a
+
+; retrieve the next pattern value
+ (cm:next p)
+; => b
+
+; retrieve multiple pattern values
+ (cm:next p 19)
+; => (c a b c a b c a b c a b c a b c a b c)
+
+; retrieve the all pattern values of one pattern period
+(cm:next p T)
+; => (a b c)
+#+end_src
+
+
+The plain cycle pattern can be used, e.g., to define the pitch sequence of an [[https://en.wikipedia.org/wiki/Alberti_bass][alberti bass]].
+
+#+begin_src common-lisp :tangle yes
+(setf bass (cm:new cm:cycle :of '(c3 e3 g3 e3)))
+
+(cm:next bass 16)
+; => (c3 e3 g3 e3 c3 e3 g3 e3 c3 e3 g3 e3 c3 e3 g3 e3)
+#+end_src
+
+
+Common Music provides a number of [[http://commonmusic.sourceforge.net/cm2/doc/dict/patterns-topic.html][pattern classes]]; the [[http://commonmusic.sourceforge.net/cm2/doc/dict/heap-cls.html][heap pattern]] returns a random permutation of its elements. 
+
+;; heap pattern
+#+begin_src common-lisp :tangle yes
+(setf q (cm:new cm:heap :of '(c4 d4 eb4 b3) :for 20))
+
+(cm:next q T)
+; => (d4 c4 eb4 b3 eb4 c4 b3 d4 b3 c4 eb4 d4 eb4 d4 c4 b3 eb4 d4 b3 c4)
+#+end_src
+
+
+Patterns can be nested. Here, the cycle pattern alternates between two sub-patterns.
+
+#+begin_src common-lisp :tangle yes
+(setf pat1
+ (cm:new cm:cycle 
+        :of (list (cm:new cm:heap :of '(c4 e4 g4))
+                  (cm:new cm:heap :of '(gs4 as4 cs5)))))
+(cm:next pat1 T)
+; => (c4 g4 e4 as4 gs4 cs5)
+#+end_src
+
+Here, the outer pattern of the nesting is the [[http://commonmusic.sourceforge.net/cm2/doc/dict/weighting-cls.html][weighting pattern]], and the maximum number of repetitions of the sub-patterns is specified. 
+
+#+begin_src common-lisp :tangle yes
+(setf pat1b 
+      (cm:new cm:weighting
+        :of `((,(cm:new cm:cycle :of '(a4 b4 c5 d5)) :max 2)
+              (,(cm:new cm:heap :of '(gs4 as4 cs5 ds5)) :max 2))))
+(cm:next pat1b 20)
+; => (a4 b4 c5 d5 gs4 ds5 cs5 as4 as4 cs5 ds5 gs4 a4 b4 c5 d5 gs4 ds5 as4 cs5)
+#+end_src
+
+Another nested pattern example, but this time the length of the second sub-pattern is only 1, and so a single period of this sub-pattern is distributed over multiple periods of the outer pattern.
+
+#+begin_src common-lisp :tangle yes
+(setf pat2 
+      (cm:new cm:cycle 
+        :of (list 'c4 'd4 (cm:new cm:cycle :of '(gs4 as4 bs4) :for 1))))
+(cm:next pat2 20)
+; => (c4 d4 gs4 c4 d4 as4 c4 d4 bs4 c4 d4 gs4 c4 d4 as4 c4 d4 bs4 c4 d4)
+#+end_src
+
+In the next example, the length of a sub-pattern is controlled by another pattern.
+
+#+begin_src common-lisp :tangle yes
+(setf pat3 
+       (cm:new cm:cycle 
+         :of (list (cm:new cm:cycle :of '(c4))
+                   (cm:new cm:cycle 
+                     :of '(cs5 ds5 fs5)
+                     :for (cm:new cm:cycle :of '(1 2 3))))))
+(cm:next pat3 20)
+; => (c4 cs5 c4 ds5 fs5 c4 cs5 ds5 fs5 c4 cs5 c4 ds5 fs5 c4 cs5 ds5 fs5 c4 cs5)
+#+end_src
+
+
+While Common Music processes are missing in this library, we can use loops instead of combine multiple patterns. Below, two patterns are combined by adding their values. These patterns have differing lengths.
+
+#+begin_src common-lisp :tangle yes
+(let ((p1 (cm:new cm:cycle :of '(60 62 64 65)))
+      (p2 (cm:new cm:cycle :of '(0 2 4 6 8))))
+  (loop repeat 20
+    for x = (cm:next p1)
+    for y = (cm:next p2)
+    collect (+ x y)))
+; => (60 64 68 71 68 62 66 69 66 70 64 67 64 68 72 65 62 66 70 73)
+#+end_src
+
+
+Another example of combining multiple patterns with a loop: a nested loop allows to have another form of nested patterns. 
+
+#+begin_src common-lisp :tangle yes
+(let ((p1 (cm:new cm:cycle :of '(0 2 4 6 8)))
+      (p2 (cm:new cm:cycle :of '(60 62 64 65))))
+  (loop repeat 4
+    for x = (cm:next p1)
+    append (loop repeat 4
+              for y = (cm:next p2)
+              collect (+ x y))))
+; => (60 62 64 65 62 64 66 67 64 66 68 69 66 68 70 71)
+#+end_src
+
+
+The last example defines a [[http://commonmusic.sourceforge.net/cm2/doc/dict/join-cls.html][join pattern]], which merges two or more parallel sub-patterns into lists.
+
+#+begin_src common-lisp :tangle yes
+(setf pat4 
+      (cm:new cm:join :of 
+        (list (cm:new cm:weighting :of '(c4 g4) :for 1)
+              (cm:new cm:cycle :of '(q q e e)))))
+(cm:next pat4 20)
+; => ((c4 q) (c4 q) (c4 e) (g4 e) (g4 q) (c4 q) (g4 e) (g4 e) (g4 q) (g4 q) (c4 e) (c4 e) (g4 q) (c4 q) (g4 e) (g4 e) (g4 q) (c4 q) (c4 e) (g4 e))
+#+end_src
+
+
+
+
+* Changes compared with the OM Patterns library
+
+  I turned this library in an [[https://common-lisp.net/project/asdf/][ASDF]] system for easy installation, removed all code that depends on OpenMusic, and changed the code slightly so that it compiles and runs on Clozure CL (e.g., make sure the MOP symbols from the correct package are called).  
+
+
+* License
+
+  Distributed under the same license as Common Music, the [[https://creativecommons.org/licenses/by-nc-sa/2.0/][Attribution-NonCommercial-ShareAlike Vizsage Public License]].
+
+  Copyright © 2017 Torsten Anders
+
+
+
+  
+
+
