@@ -23,7 +23,7 @@
             ccl:class-direct-slots
             ccl:validate-superclass
             ccl:without-interrupts)
-          :pat)
+          :cm)
   (defun finalize-class (class) class t))
 
 
@@ -40,5 +40,5 @@
             hcl:validate-superclass
             mp:without-interrupts
             )
-          :pat)
+          :cm)
   (defun finalize-class (class) class (values)))
