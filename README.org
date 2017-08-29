@@ -177,6 +177,8 @@ The last example defines a [[http://commonmusic.sourceforge.net/cm2/doc/dict/joi
 ; => ((c4 q) (c4 q) (c4 e) (g4 e) (g4 q) (c4 q) (g4 e) (g4 e) (g4 q) (g4 q) (c4 e) (c4 e) (g4 q) (c4 q) (g4 e) (g4 e) (g4 q) (c4 q) (c4 e) (g4 e))
 #+end_src
 
+For more detail see the Common Music book and documentation linked above.
+
 
 * Comparison with Common Music 
 
