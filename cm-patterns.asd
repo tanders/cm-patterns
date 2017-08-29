@@ -15,13 +15,13 @@ The data parsing features of the original versions: 'keynum', 'transpose' etc. a
 
 Taube, H. (2004) Notes from the Metalevel. London and New York: Taylor & Francis." 
   :author "Rick Taube <taube@illinois.edu> (original design), Anders Vinjar <anders.vinjar@bek.no> (port to OpenMusic), Torsten Anders <torsten.anders@beds.ac.uk> (ASDF library for plain Common Lisp)"
-  :licence "Attribution-NonCommercial-ShareAlike Vizsage Public License"
+  :licence "GPLv2"
+  ;; :licence "Attribution-NonCommercial-ShareAlike Vizsage Public License"
   :version "0.1"
   :serial t ;; the dependencies are linear.
   :components ((:file "sources/make-package")
 	       (:file "sources/utils")
 	       (:file "sources/pattern-classes")
-	       ; (:file "sources/OM-classes")
 	       )
   :depends-on ())
 

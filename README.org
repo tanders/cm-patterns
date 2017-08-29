@@ -1,8 +1,8 @@
 * Common Music patterns (cm-patterns)
 
-This is Rick Taube's 'Pattern Streams' from Common Music v.2, but without the rest of Common Music. The code is based on the Patterns library by Anders Vinjar, who [[https://forge.ircam.fr/p/omlibraries/downloads/639/][ported the Common Music to OpenMusic]] (OM Patterns library version 0.98). 
+This is Rick Taube's [[http://commonmusic.sourceforge.net/cm2/doc/dict/patterns-topic.html][Pattern Streams]] from [[http://commonmusic.sourceforge.net/cm2/doc/dict/index.html][Common Music v.2]], but without the rest of Common Music. The code is based on the Patterns library by Anders Vinjar, who [[https://forge.ircam.fr/p/omlibraries/downloads/639/][ported the Common Music to OpenMusic]] (OM Patterns library version 0.98). 
 
-This code has been tested with Clozure CL ([[http://opusmodus.com/][in Opusmodus]]).
+This code has been tested with Clozure CL (in [[http://opusmodus.com/][Opusmodus]]).
 
 
 ** References 
@@ -188,11 +188,9 @@ The last example defines a [[http://commonmusic.sourceforge.net/cm2/doc/dict/joi
   I turned this library in an [[https://common-lisp.net/project/asdf/][ASDF]] system for easy installation, removed all code that depends on OpenMusic, and changed the code slightly so that it compiles and runs on Clozure CL (e.g., make sure the MOP symbols from the correct package are called).  
 
 
-* License
+* COMMENT License
 
-  Distributed under the same license as Common Music, the [[https://creativecommons.org/licenses/by-nc-sa/2.0/][Attribution-NonCommercial-ShareAlike Vizsage Public License]].
-
-  Copyright © 2017 Torsten Anders
+  Distributed under the license of Common Music version 2 (GPLv2).
 
 
 
