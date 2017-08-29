@@ -87,7 +87,6 @@ The plain cycle pattern can be used, e.g., to define the pitch sequence of an [[
 
 Common Music provides a number of [[http://commonmusic.sourceforge.net/cm2/doc/dict/patterns-topic.html][pattern classes]]; the [[http://commonmusic.sourceforge.net/cm2/doc/dict/heap-cls.html][heap pattern]] returns a random permutation of its elements. 
 
-;; heap pattern
 #+begin_src common-lisp :tangle yes
 (setf q (cm:new cm:heap :of '(c4 d4 eb4 b3) :for 20))
 
