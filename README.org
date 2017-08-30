@@ -177,14 +177,32 @@ The last example defines a [[http://commonmusic.sourceforge.net/cm2/doc/dict/joi
 ; => ((c4 q) (c4 q) (c4 e) (g4 e) (g4 q) (c4 q) (g4 e) (g4 e) (g4 q) (g4 q) (c4 e) (c4 e) (g4 q) (c4 q) (g4 e) (g4 e) (g4 q) (c4 q) (c4 e) (g4 e))
 #+end_src
 
+
 For more detail see the Common Music book and documentation linked above.
 
 
 * Comparison with Common Music 
 
-  This section lists changes to the original patterns in Common Music 2, introduced by the OM Patterns library. Anders Vinjar extracted the pattern stream functionality -- arguably the most important contribution of Common Music to algorithmic composition in general -- from an otherwise rather large and complex system. Common Music features beyond the actual patterns are missing, e.g., there are no [[http://commonmusic.sourceforge.net/cm2/doc/dict/process-mac.html][CM processes]]. 
+  This section lists changes to the original patterns in Common Music 2, introduced by the OM Patterns library.   Anders Vinjar extracted the pattern stream functionality -- arguably the most important contribution of Common Music to algorithmic composition in general -- from an otherwise rather large and complex system. Common Music features beyond the actual patterns are missing, e.g., there are no [[http://commonmusic.sourceforge.net/cm2/doc/dict/process-mac.html][CM processes]]. 
 
-  All of Rick's various pattern classes from Common Music are included, except for a few that depend on other Common Music functionality, namely the data parsing features of the original versions with pattern keywords like =keynum=, =transposer=, and =chord=. 
+  Compared with the original Common Music =heap= pattern, this version supports an additional keyword. In the original version, direct repetitions could occur when crossing period-boundaries, as shown below.
+
+#+begin_src common-lisp :tangle yes
+(setf p (cm:new cm:heap :of '(0 1 2)))
+(cm:next p 20)
+; => (1 2 0 1 0 2 0 1 2 0 2 1 0 1 2 2 1 0 2 1)
+#+end_src
+
+  This can now be prevented by setting the new keyword =:elide-last?= to =T= for this pattern.
+
+#+begin_src common-lisp :tangle yes
+(setf p (cm:new cm:heap :of '(0 1 2) :elide-last? T))
+(cm:next p 20)
+; => (1 2 0 1 0 2 0 1 2 0 2 1 0 1 2 0 1 2 0 1)
+#+end_src
+  
+  
+  Otherwise, all of Rick's various pattern classes from Common Music are included, except for a few that depend on other Common Music functionality, namely the data parsing features of the original versions with pattern keywords like =keynum=, =transposer=, and =chord=. 
 
   Also, as the resulting code was only meant for OpenMusic, some code ensuring compatibility with various Lisp compilers was removed.
 
