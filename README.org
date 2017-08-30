@@ -1,6 +1,6 @@
 * Common Music Patterns (cm-patterns)
 
-This is Rick Taube's [[http://commonmusic.sourceforge.net/cm2/doc/dict/patterns-topic.html][Pattern Streams]] from [[http://commonmusic.sourceforge.net/cm2/doc/dict/index.html][Common Music v.2]], but without the rest of Common Music. The code is based on the Patterns library by Anders Vinjar, who [[https://forge.ircam.fr/p/omlibraries/downloads/639/][ported the Common Music to OpenMusic]] (OM Patterns library version 0.98). 
+This is Rick Taube's [[http://commonmusic.sourceforge.net/cm2/doc/dict/patterns-topic.html][Pattern Streams]] from [[http://commonmusic.sourceforge.net/cm2/doc/dict/index.html][Common Music v.2]], but without the rest of Common Music. The code is based on the Patterns library by Anders Vinjar, who [[https://forge.ircam.fr/p/omlibraries/downloads/646/][ported the Common Music to OpenMusic]] (OM Patterns library version 0.99.2). 
 
 This code has been tested with Clozure CL (in [[http://opusmodus.com/][Opusmodus]]).
 
