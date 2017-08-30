@@ -2,7 +2,6 @@
 
 (in-package :cm)
 
-
 (defparameter +constant-data+ (ash 1 0))
 (defparameter +constant-weights+ (ash 1 1))
 (defparameter +count-periods+ (ash 1 2))
@@ -530,15 +529,20 @@
 
 (progn
   (defclass heap (cycle)
-    ((random-state :initform *random-state* :initarg :state :accessor pattern-random-state)))
+    ((random-state :initform *random-state* :initarg :state :accessor pattern-random-state)
+     ;; Added by Anders Vinjar
+     (elide-last? :initform nil :initarg :elide-last? :accessor heap-elide-last?
+		  :documentation "[Boolean] If true, ban direct repetition of any previous item. If nil, this may happen when crossing period-boundaries")))
   (defparameter <heap> (find-class 'heap))
   (finalize-class <heap>))
 
 (defmethod pattern-external-inits ((obj heap))
-  (let ((inits (call-next-method)))
-    (if (eq *random-state* (pattern-random-state obj))
-        inits
-	(append inits (list :state (pattern-random-state obj))))))
+  (let ((inits (call-next-method))
+	(state (pattern-random-state obj))
+	(elide-last? (heap-elide-last? obj)))
+    (append inits
+	    (and state (list :state state))
+	    (and elide-last? (list :elide-last? elide-last?)))))
 
 (defmethod initialize-instance :after ((obj heap) &rest args)
   (let ((cyc (pattern-data obj)))
@@ -557,12 +561,28 @@
     (let ((cyc (pattern-data obj)))
       (when (null (cycl-tail cyc))
 	(cycl-tail-set! cyc
-			(shufl
-			 (cycl-data cyc)
-			 (pattern-length obj)
-			 (pattern-random-state obj))))
-      (pop-cycl cyc))))
+			(if (heap-elide-last? obj)
+			    (loop for new-cycle = (shufl
+						   (cycl-data cyc)
+						   (pattern-length obj)
+						   (pattern-random-state obj))
+			       while (equal (car new-cycle) (heap-elide-last? obj))
+			       finally (return new-cycle))
+			    (shufl
+			     (cycl-data cyc)
+			     (pattern-length obj)
+			     (pattern-random-state obj)))))
+      (if (heap-elide-last? obj)
+	  (setf (heap-elide-last? obj) (pop-cycl cyc))
+	  (pop-cycl cyc)))))
 
+#|
+(let ((hhh (make-instance 'heap :of '(0 1 2) :elide-last? nil)))
+  (loop repeat 20 collect (next-in-pattern hhh)))
+
+(let ((hhh (make-instance 'heap :of '(0 1 2) :elide-last? t)))
+  (loop repeat 20 collect (next-in-pattern hhh)))
+|#
 
 ;;;
 ;;; weighting chooses using weighted selection. its data are kept in a list of
