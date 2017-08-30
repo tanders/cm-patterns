@@ -42,3 +42,22 @@
             )
           :cm)
   (defun finalize-class (class) class (values)))
+
+#+sbcl
+(progn 
+  (import '(; sb-ext::load-foreign
+	    sb-pcl:slot-definition-initargs
+	    sb-pcl:slot-definition-initform
+	    sb-pcl:slot-definition-name
+	    sb-pcl:class-direct-slots
+	    sb-pcl:class-slots
+	    sb-pcl:class-direct-superclasses
+	    sb-pcl:generic-function-name
+	    sb-mop:class-direct-subclasses
+	    sb-mop:validate-superclass
+	    sb-sys:without-interrupts
+	    )
+	  :cm)
+  (defun finalize-class (class) 
+    (sb-pcl:finalize-inheritance class)))
+
