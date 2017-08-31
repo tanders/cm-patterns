@@ -1389,7 +1389,11 @@
 ;;; rewrite
 ;;;
 
-; (setf a (new rewrite of '((a :-> (b)) (b :-> (b a a)))))
+#|
+(setf a (new rewrite of '((a :-> (b)) (b :-> (b a a)))))
+(next a 20)
+=> (A B B A A B A A B B B A A B B B A A B A)
+|#
 
 (defstruct rewrite-node datum id to props)
 
@@ -1419,9 +1423,8 @@
 				(list ':to
 				      `',(loop
 					    for x in (rewrite-node-to n)
-					    collect (if (listp x)
-							(rewrite-node-id
-							 x)
+					    collect (if (rewrite-node-p x) ; (listp x)
+							(rewrite-node-id x)
 							x)))))))
     (append (list ':of
                   (cons 'list
